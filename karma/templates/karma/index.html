@@ -1,0 +1,28 @@
+{% load staticfiles %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'karma/style.css' %}" />
+
+{% if committees %}
+        <ul class="committeelinks">
+            <li><b><a href="{% url 'karma:index' %}">home</a></b></li>
+            {% for committee in committees %}
+                    <li><a href="{% url 'karma:committeeView' committee.name %}">{{committee.name}}</a></li>
+            {% endfor %}
+        </ul>
+{% endif %}
+{% if persons %}
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Karma points</th>
+            </tr>
+            {% for person in persons %}
+                    <tr>
+                        <td><a href="{% url 'karma:personView' person.firstName %}">{{ person.firstName }} {{ person.lastName }}</a></td>
+                        <td>{{ person.getKarma }}</td>
+                    </tr>
+            {% endfor %}
+        </table>
+{% else %}
+        <p>No persons available</p>
+{% endif %}

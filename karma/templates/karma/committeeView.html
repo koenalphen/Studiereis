@@ -1,0 +1,34 @@
+{% load staticfiles %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'karma/style.css' %}" />
+
+{% if committees and committeeSelected %}
+        <ul class="committeelinks">
+            <li><a href="{% url 'karma:index' %}">home</a></li>
+            {% for committee in committees %}
+                {% if committee != committeeSelected %}
+                    <li><a href="{% url 'karma:committeeView' committee.name %}">{{committee.name}}</a></li>
+                {% else %}
+                    <li><b><a href="{% url 'karma:committeeView' committee.name %}">{{committee.name}}</a></b></li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+{% endif %}
+{% if committeeSelected and tasks %}
+        <table>
+            <tr>
+                <th>name</th>
+                <th>description</th>
+                <th>karma</th>
+                <th>date</th>
+            </tr>
+            {% for task in tasks %}
+                <tr>
+                    <td>{{task.getPerson}}</td>
+                    <td>{{task.getTaskName}}</td>
+                    <td>{{task.getTaskKarma}}</td>
+                    <td>{{task.time}}</td>
+                </tr>
+            {% endfor %}
+        </table>
+{% endif %}
