@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 
-from karma.models import Person, KarmaLog, Committee
+from karma.models import Person, KarmaLog, Committee, Task
 
 #In de index staat een tabel met alle personen, en hoeveel karmapunten ze hebben
 def index(request):
@@ -13,11 +13,13 @@ def index(request):
     return render(request, 'karma/index.html', context)
 
 def personView(request, person_name):
-    person = get_object_or_404(Person, firstName = person_name)
+    person = get_object_or_404(Person, firstName=person_name)
     tasks = KarmaLog.objects.filter(person=person.pk)
+    taskOverview = Task.objects.all()
     committees = Committee.objects.all()
     context = {
         'person': person,
+        'taskOverview': taskOverview,
         'tasks': tasks,
         'committees': committees
     }
@@ -34,5 +36,8 @@ def committeeView(request, committeeName):
     }
     return render(request, 'karma/committeeView.html', context)
 
-def addTask(request, person_id):
-    pass
+def addTask(request):
+    person_id = request.POST["person_id"]
+    taskselect = request.POST["taskselect"]
+    if taskselect == "nieuw_task":
+        omschrijving = request.POST["Omschrijving"]
