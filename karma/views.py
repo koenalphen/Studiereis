@@ -16,7 +16,7 @@ def index(request):
 
 def personView(request, person_name):
     person = get_object_or_404(Person, firstName=person_name)
-    tasks = KarmaLog.objects.filter(person=person.pk)
+    tasks = reversed(KarmaLog.objects.filter(person=person.pk))
     taskOverview = Task.objects.all()
     committees = Committee.objects.all()
     context = {
@@ -30,7 +30,7 @@ def personView(request, person_name):
 def committeeView(request, committeeName):
     committees = Committee.objects.all()
     committeeSelected = Committee.objects.get(name=committeeName)
-    tasks = KarmaLog.objects.filter(committee=committeeSelected.pk)
+    tasks = reversed(KarmaLog.objects.filter(committee=committeeSelected.pk))
     context = {
         'committeeSelected': committeeSelected,
         'committees': committees,
