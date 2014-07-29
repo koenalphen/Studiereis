@@ -6,5 +6,5 @@ urlpatterns = patterns('',
     url(r'^$', views.index, name='index'),
     url(r'^(?P<person_name>\w+)/$', views.personView, name='personView'),
     url(r'^committee/(?P<committeeName>\w+)/$', views.committeeView, name='committeeView'),
-    url(r'^addTask/$', views.addTask, name='addTask')
+    url(r'^(?P<person_name>\w+)/addTask/$', views.addTask, name='addTask')
 )

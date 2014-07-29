@@ -20,4 +20,16 @@ $(document).ready(function(){
             $(this).val("Omschrijving");
         }
     });
+
+    $("#commentField").focus(function(){
+        if($(this).val() == "comment"){
+            $(this).val("");
+        }
+    });
+
+    $("#commentField").focusout(function(){
+        if($(this).val() == ""){
+            $(this).val("comment");
+        }
+    });
 });

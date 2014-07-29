@@ -20,6 +20,7 @@
                 <th>name</th>
                 <th>description</th>
                 <th>karma</th>
+                <th>comment</th>
                 <th>date</th>
             </tr>
             {% for task in tasks %}
@@ -27,6 +28,7 @@
                     <td>{{task.getPerson}}</td>
                     <td>{{task.getTaskName}}</td>
                     <td>{{task.getTaskKarma}}</td>
+                    <td>{{task.comment}}</td>
                     <td>{{task.time}}</td>
                 </tr>
             {% endfor %}

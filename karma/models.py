@@ -41,6 +41,7 @@ class KarmaLog(models.Model):
     person = models.ForeignKey(Person)
     committee = models.ForeignKey(Committee)
     task = models.ForeignKey(Task)
+    comment = models.CharField(max_length=2047)
     time = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
@@ -56,3 +57,6 @@ class KarmaLog(models.Model):
 
     def getPerson(self):
         return Person.objects.get(firstName=self.person)
+
+    def getCommittee(self):
+        return Committee.objects.get(name=self.committee)

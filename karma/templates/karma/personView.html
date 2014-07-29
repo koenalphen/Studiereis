@@ -12,38 +12,48 @@
             {% endfor %}
         </ul>
 {% endif %}
-{% if person and taskOverview %}
+{% if person and taskOverview and committees %}
         <h1>{{person.firstName}} {{person.lastName}}</h1>
         <div id="karmacounter">
             <h3>Karma Counter:</h3>
             <h2>{{person.getKarma}}</h2>
         </div>
         <div id="addTask">
-            <form id="taskAdder" action="{% url 'karma:addTask' %}" method="post">
+            <form id="taskAdder" action="{% url 'karma:addTask' person.firstName %}" method="post">
                 {% csrf_token %}
                 <select id="taskselect" name="taskselect">
                     {% for task in taskOverview %}
-                        <option value="{{task.description}}">{{task.description}}</option>
+                        <option value="{{task.pk}}">{{task.description}}</option>
                     {% endfor %}
                     <option value="nieuw_task">Anders...</option>
                 </select>
+                <select id="committeeSelect" name="committeeSelect">
+                    {% for committee in committees %}
+                        <option value="{{committee.pk}}">"{{committee.name}}"</option>
+                    {% endfor %}
+                </select>
                 <input type="text" value="Omschrijving" name="Omschrijving" class="Anders">
                 <input type="number" value="0" name="karma" class="Anders">
-                <input type="hidden" value="{{person.pk}}" name="person_id">
+                <textarea name="comment" value="comment" id="commentField"></textarea>
                 <input type="submit" value="Submit">
             </form>
         </div>
         <table id="personTaskOverview">
             <tr>
                 <th>description</th>
+                <th>committee</th>
                 <th>karma</th>
+                <th>comment</th>
                 <th>time</th>
             </tr>
             {% for task in tasks %}
                 <tr>
                     <td>{{task.getTaskName}}</td>
+                    <td>{{task.committee}}</td>
                     <td>{{task.getTaskKarma}}</td>
+                    <td>{{task.comment}}</td>
                     <td>{{task.time}}</td>
+
                 </tr>
             {% endfor %}
         </table>
