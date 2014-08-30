@@ -1,18 +1,19 @@
 {% load staticfiles %}
-
-<link rel="stylesheet" type="text/css" href="{% static 'karma/style.css' %}" />
-
-{% if committees and committeeSelected %}
-        <ul class="committeelinks">
-            <li><a href="{% url 'karma:index' %}">home</a></li>
-            {% for committee in committees %}
-                {% if committee != committeeSelected %}
-                    <li><a href="{% url 'karma:committeeView' committee.name %}">{{committee.name}}</a></li>
-                {% else %}
-                    <li><b><a href="{% url 'karma:committeeView' committee.name %}">{{committee.name}}</a></b></li>
-                {% endif %}
-            {% endfor %}
-        </ul>
-{% endif %}
-{% block content %}
-{% endblock %}
+<html>
+    <head>
+        <script type="text/javascript" src="{% static 'karma/jquery-1.11.1.min.js' %}"></script>
+        <link rel="stylesheet" href="http://s3.amazonaws.com/codecademy-content/courses/ltp/css/bootstrap.css">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
+        {% block head %}
+        {% endblock %}
+    </head>
+    <body>
+        <span name="banner">
+            <img class="row" src="{% static 'img/wide.jpg' %}">
+        </span>
+        {% block navigation %}
+        {% endblock %}
+        {% block content %}
+        {% endblock %}
+    </body>
+</html>

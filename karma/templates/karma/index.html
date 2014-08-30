@@ -1,17 +1,14 @@
+{% extends "karma_base.html" %}
 {% load staticfiles %}
-
+{% block head %}
 <link rel="stylesheet" type="text/css" href="{% static 'karma/style.css' %}" />
+<title>Overview</title>
+{% endblock %}
 
-{% if committees %}
-        <ul class="committeelinks">
-            <li><b><a href="{% url 'karma:index' %}">home</a></b></li>
-            {% for committee in committees %}
-                    <li><a href="{% url 'karma:committeeView' committee.name %}">{{committee.name}}</a></li>
-            {% endfor %}
-        </ul>
-{% endif %}
+
+{% block content %}
 {% if persons %}
-        <table>
+        <table class="table table-hover">
             <tr>
                 <th>Name</th>
                 <th>Karma points</th>
@@ -26,3 +23,4 @@
 {% else %}
         <p>No persons available</p>
 {% endif %}
+{% endblock %}

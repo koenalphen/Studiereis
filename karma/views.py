@@ -50,8 +50,12 @@ def addTask(request, person_name):
     if taskselect == "nieuw_task":
         omschrijving = request.POST["Omschrijving"]
         karma = request.POST["karma"]
-        task = Task(description=omschrijving, karma=karma)
-        task.save()
+        tk=Task.objects.filter(description=omschrijving)
+        if tk < 1:
+            task = Task(description=omschrijving, karma=karma)
+            task.save()
+        else:
+            return HttpResponseRedirect('karma:yousuck')
     else:
         task = Task.objects.get(pk=taskselect)
     committee = get_object_or_404(Committee, pk=committee_id)
@@ -59,4 +63,7 @@ def addTask(request, person_name):
 
     taskToAdd = KarmaLog(person=person, committee=committee, task=task, comment=comment)
     taskToAdd.save()
-    return HttpResponseRedirect(reverse('karma:personView', args=(person.firstName,)))
+    return HttpResponseRedirect(reverse('karma:personView', args=(person.pk,)))
+
+def yousuck(request):
+    return HttpResponse("You did something horribly wrong. Try again. Perhaps the activity you are trying to add already exists?")

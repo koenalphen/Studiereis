@@ -1,50 +1,27 @@
+{% extends "karma_base.html" %}
 {% load staticfiles %}
-
+{% block head %}
 <link rel="stylesheet" type="text/css" href="{% static 'karma/style.css' %}" />
-<script type="text/javascript" src="{% static 'karma/jquery-1.11.1.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'karma/personView.js' %}"></script>
+<title>Person view</title>
+{% endblock %}
 
-{% if committees %}
-        <ul class="committeelinks">
-            <li><a href="{% url 'karma:index' %}">home</a></li>
-            {% for committee in committees %}
-                    <li><a href="{% url 'karma:committeeView' committee.name %}">{{committee.name}}</a></li>
-            {% endfor %}
-        </ul>
-{% endif %}
+{% block content %}
+
 {% if person %}
-        <h1>{{person.firstName}} {{person.lastName}}</h1>
-        <div id="karmacounter">
-            <h3>Karma Counter:</h3>
-            <h2>{{person.getKarma}}</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <center><h1>{{person.firstName}} {{person.lastName}}</h1></center>
+            </div>
+            <div id="karmacounter" class="col-md-6">
+                <h1>Karma Counter: {{person.getKarma}}</h1>
+            </div>
         </div>
+        <hr>
 
-        <div id="addTask">
-            <form id="taskAdder" action="{% url 'karma:addTask' person.firstName %}" method="post">
-                {% csrf_token %}
-                <select id="taskselect" name="taskselect">
-                    {% if taskOverview %}
-                    {% for task in taskOverview %}
-                        <option value="{{task.pk}}">{{task.description}}</option>
-                    {% endfor %}
-                    {% endif %}
-                    <option value="nieuw_task">Anders...</option>
-                </select>
-                <select id="committeeSelect" name="committeeSelect">
-                    {% if committees %}
-                    {% for committee in committees %}
-                        <option value="{{committee.pk}}">"{{committee.name}}"</option>
-                    {% endfor %}
-                    {% endif %}
-                </select>
-                <input type="text" value="Omschrijving" name="Omschrijving" class="Anders">
-                <input type="number" value="0" name="karma" class="Anders">
-                <input type="date" name="datetime" class="date" value= "2009-06-23">
-                <textarea name="comment" value="comment" id="commentField"></textarea>
-                <input type="submit" value="Submit">
-            </form>
-        </div>
-        <table id="personTaskOverview">
+    <div class="row">
+        <div class="col-md-6">
+        <table id="personTaskOverview" class="table table-striped">
             <tr>
                 <th>description</th>
                 <th>committee</th>
@@ -63,6 +40,49 @@
                 </tr>
             {% endfor %}
         </table>
+        </div>
+        <div id="addTask" class="col-md-6">
+            <form id="taskAdder" action="{% url 'karma:addTask' person.firstName %}" method="post" role="form" class="form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="taskselect">Select task</label>
+                    <select class="form-control" id="taskselect" name="taskselect">
+                    {% if taskOverview %}
+                    {% for task in taskOverview %}
+                        <option value="{{task.pk}}">{{task.description}}</option>
+                    {% endfor %}
+                    {% endif %}
+                    <option value="nieuw_task">Anders...</option>
+                </select>
+                </div>
+                <div class="form-group">
+                    <label for="committeeSelect">Select for which committee you did this task</label>
+                    <select class="form-control" id="committeeSelect" name="committeeSelect">
+                        {% if committees %}
+                        {% for committee in committees %}
+                            <option value="{{committee.pk}}">"{{committee.name}}"</option>
+                        {% endfor %}
+                        {% endif %}
+                    </select>
+                </div>
+                <div class="form-group Anders">
+                    <label for="Omschrijving">Geef een omschrijving wat je gedaan hebt en het aantal karmapunten</label>
+                    <input class="form-control Anders" type="text" value="Omschrijving" id="Omschrijving" name="Omschrijving">
+                    <input class="form-control Anders" type="number" id="karma" value="0" name="karma">
+                </div>
+                <div class="form-group">
+                    <label for="datetime">Wanneer heb je dit gedaan?</label>
+                    <input class="form-control" type="date" id="datetime" name="datetime" class="date" placeholder = "2009-06-23"> <!-- TODO fix europees formaat -->
+                </div>
+                <div class="form-group">
+                    <label for="comment">Opmerking</label>
+                    <textarea class="form-control" name="comment" id="comment" value="comment" id="commentField" placeholder="Comment"></textarea>
+                </div>
+                <input type="submit" value="Submit" class="btn btn-default">
+            </form>
+        </div>
+    </div>
 {% else %}
         <p>you selected someone that is not in the system (yet)</p>
 {% endif %}
+{% endblock %}

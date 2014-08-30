@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block navigation %}
+{% if committees %}
+        <ul class="nav nav-tabs">
+            <li><a href="{% url 'karma:index' %}">Participants</a></li>
+            {% for committee in committees %}
+                    <li><a href="{% url 'karma:committeeView' committee.name %}">{{committee.name}}</a></li>
+            {% endfor %}
+        </ul>
+{% endif %}
+{% endblock %}
