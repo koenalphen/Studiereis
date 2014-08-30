@@ -18,7 +18,7 @@
             </tr>
             {% for person in persons %}
                     <tr>
-                        <td><a href="{% url 'karma:personView' person.firstName %}">{{ person.firstName }} {{ person.lastName }}</a></td>
+                        <td><a href="{% url 'karma:personView' person.pk %}">{{ person.firstName }} {{ person.lastName }}</a></td>
                         <td>{{ person.getKarma }}</td>
                     </tr>
             {% endfor %}

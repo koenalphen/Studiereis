@@ -4,7 +4,10 @@ from django.core.urlresolvers import reverse
 
 from karma.models import Person, KarmaLog, Committee, Task
 
+# TODO update style base.html
+
 def index(request):
+    # TODO write a generic view, linking to karma and polls
     committees = Committee.objects.all()
     context = {
         'committees': committees

@@ -17,8 +17,8 @@ def index(request):
     return render(request, 'karma/index.html', context)
 
 @login_required()
-def personView(request, person_name):
-    person = get_object_or_404(Person, firstName=person_name)
+def personView(request, person_id):
+    person = get_object_or_404(Person, pk=person_id)
     tasks = reversed(KarmaLog.objects.filter(person=person.pk))
     taskOverview = Task.objects.all()
     committees = Committee.objects.all()
