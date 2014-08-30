@@ -1,10 +1,12 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
+from django.contrib.auth.decorators import login_required
 
 from karma.models import Person, KarmaLog, Committee, Task
 
 #In de index staat een tabel met alle personen, en hoeveel karmapunten ze hebben
+@login_required()
 def index(request):
     persons = Person.objects.all()
     committees = Committee.objects.all()
@@ -14,6 +16,7 @@ def index(request):
     }
     return render(request, 'karma/index.html', context)
 
+@login_required()
 def personView(request, person_name):
     person = get_object_or_404(Person, firstName=person_name)
     tasks = reversed(KarmaLog.objects.filter(person=person.pk))
@@ -27,6 +30,7 @@ def personView(request, person_name):
     }
     return render(request, 'karma/personView.html', context)
 
+@login_required()
 def committeeView(request, committeeName):
     committees = Committee.objects.all()
     committeeSelected = Committee.objects.get(name=committeeName)
@@ -38,6 +42,7 @@ def committeeView(request, committeeName):
     }
     return render(request, 'karma/committeeView.html', context)
 
+@login_required()
 def addTask(request, person_name):
     comment = request.POST["comment"] if request.POST["comment"] != "comment" else ""
     taskselect = request.POST["taskselect"]
