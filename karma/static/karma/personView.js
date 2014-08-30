@@ -1,5 +1,10 @@
 $(document).ready(function(){
+    var dt = new Date();
+    var dattime = dt.toISOString().slice(0,10);
+    $(".date").val(dattime);
+
     $(".Anders").hide();
+
     $("#taskselect").change(function(){
         if ($("#taskselect").val() == "nieuw_task") {
             $(".Anders").show();
@@ -32,4 +37,6 @@ $(document).ready(function(){
             $(this).val("comment");
         }
     });
+
+
 });
