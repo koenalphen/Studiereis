@@ -23,7 +23,7 @@ class Person(models.Model):
 
     def getKarma(self):
         karma = 0
-        for activity in KarmaLog.objects.filter(person=self.pk):
+        for activity in KarmaLog.objects.filter(person=self.pk, active=True):
             task = Task.objects.get(description=activity.task)
             karma += task.karma
         return karma
@@ -43,6 +43,7 @@ class KarmaLog(models.Model):
     task = models.ForeignKey(Task)
     comment = models.CharField(max_length=2047)
     time = models.DateTimeField(auto_now_add=True)
+    active = models.BooleanField(default=True)
 
     def __unicode__(self):
         return unicode(self.pk)

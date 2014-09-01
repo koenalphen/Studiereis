@@ -23,11 +23,12 @@
         <div class="col-md-6">
         <table id="personTaskOverview" class="table table-striped">
             <tr>
-                <th>description</th>
-                <th>committee</th>
-                <th>karma</th>
-                <th>comment</th>
-                <th>time</th>
+                <th>Description</th>
+                <th>Committee</th>
+                <th>Karma</th>
+                <th>Comment</th>
+                <th>Time</th>
+                <th>Delete</th>
             </tr>
             {% for task in tasks %}
                 <tr>
@@ -36,20 +37,21 @@
                     <td>{{task.getTaskKarma}}</td>
                     <td>{{task.comment}}</td>
                     <td>{{task.time}}</td>
+                    <td><button id="{{task.pk}}"><img src="{% static 'karma/waste.png' %}" style="width: 20px; height: 20px;"></button></td>
 
                 </tr>
             {% endfor %}
         </table>
         </div>
         <div id="addTask" class="col-md-6">
-            <form id="taskAdder" action="{% url 'karma:addTask' person.firstName %}" method="post" role="form" class="form">
+            <form id="taskAdder" action="{% url 'karma:addTask' person.pk %}" method="post" role="form" class="form">
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="taskselect">Select task</label>
                     <select class="form-control" id="taskselect" name="taskselect">
                     {% if taskOverview %}
                     {% for task in taskOverview %}
-                        <option value="{{task.pk}}">{{task.description}}</option>
+                        <option value="{{task.pk}}">{{task.description}} - {{task.karma}}</option>
                     {% endfor %}
                     {% endif %}
                     <option value="nieuw_task">Anders...</option>
