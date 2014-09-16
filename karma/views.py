@@ -58,12 +58,12 @@ def addTask(request, person_id):
     if taskselect == "nieuw_task":
         omschrijving = request.POST["Omschrijving"]
         karma = request.POST["karma"]
-        tk=Task.objects.filter(description=omschrijving)
-        if tk < 1:
+        tk = Task.objects.filter(description=omschrijving)
+        if len(tk) == 0:
             task = Task(description=omschrijving, karma=karma)
             task.save()
         else:
-            return HttpResponseRedirect('karma:yousuck')
+            return HttpResponse("You did something horribly wrong. Perhaps the activity you are trying to add already exists?")
     else:
         task = Task.objects.get(pk=taskselect)
     committee = get_object_or_404(Committee, pk=committee_id)
@@ -86,5 +86,5 @@ def removeTask(request):
 
 
 
-def yousuck(request):
+def yousuck(request, person_id):
     return HttpResponse("You did something horribly wrong. Perhaps the activity you are trying to add already exists?")
