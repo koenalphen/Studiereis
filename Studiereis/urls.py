@@ -12,7 +12,8 @@ urlpatterns = patterns('',
     url(r'^logout/', 'django.contrib.auth.views.logout'),
     url(r'^karma/', include('karma.urls', namespace='karma')),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^polls/', include('polls.urls', namespace='polls')),
     url(r'^/$', views.index, name='index'),
     url(r'^$', views.index, name='index')
-   # url(r'^polls/', include('polls.urls', namespace='polls')),
+    # url(r'^polls/', include('polls.urls', namespace='polls')),
 )
