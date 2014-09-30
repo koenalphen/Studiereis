@@ -93,7 +93,8 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
     'Studiereis/templates',
     'karma/templates/karma',
+    'polls/templates/polls',
 )
 
 
-LOGIN_URL = '/login/'
+LOGIN_URL = 'login/'

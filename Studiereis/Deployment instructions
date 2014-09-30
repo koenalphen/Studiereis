@@ -1,0 +1,13 @@
+Install apache2 + database program
+Install Django
+Install Git
+Pull code from Github
+Install libapache-mod-wsgi
+
+edit /etc/apache2/httpd.conf (if non existent, create one and add "Include httpd.conf" to the end of the apache2.conf file) and follow the instructions https://docs.djangoproject.com/en/1.4/howto/deployment/wsgi/modwsgi/
+
+
+Initialize database with name and user
+Configure Studiereis/settings.py. provide correct user, installed apps, template directory (USE ABSOLUTE PATHS!!!) etc
+Configure Studiereis/urls.py (add app)
+chown -R www-data:www-data Studiereis/* in de map waar de website staat
