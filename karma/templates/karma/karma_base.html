@@ -7,6 +7,8 @@
             {% for committee in committees %}
                     <li><a href="{% url 'karma:committeeView' committee.name %}">{{committee.name}}</a></li>
             {% endfor %}
+	    <li><a href="{% url 'logout' %}">Log out</a></li>
+	    <li><a href="{% url 'passwd' %}">Change password</a></li>
         </ul>
 {% endif %}
 {% endblock %}

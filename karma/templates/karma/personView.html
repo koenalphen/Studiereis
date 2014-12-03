@@ -36,7 +36,7 @@
                     <td>{{task.committee}}</td>
                     <td>{{task.getTaskKarma}}</td>
                     <td>{{task.comment}}</td>
-                    <td>{{task.time}}</td>
+                    <td>{{task.time|date:"D d M Y"}}</td>
                     <td><button id="{{task.pk}}"><img src="{% static 'karma/waste.png' %}" style="width: 20px; height: 20px;"></button></td>
 
                 </tr>
@@ -68,16 +68,21 @@
                     </select>
                 </div>
                 <div class="form-group Anders">
-                    <label for="Omschrijving">Geef een omschrijving wat je gedaan hebt en het aantal karmapunten</label>
+                    <label for="Omschrijving">Describe what you have done and the amount of karma points you deserve</label>
                     <input class="form-control Anders" type="text" value="Omschrijving" id="Omschrijving" name="Omschrijving">
                     <input class="form-control Anders" type="number" id="karma" value="0" name="karma">
+
+		    <div class = "checkbox">
+		    <label for="recurring">
+	 	    <input class="Anders" type="checkbox" name="recurring">This task is recurring</label></div>
+
                 </div>
                 <div class="form-group">
-                    <label for="datetime">Wanneer heb je dit gedaan?</label>
+                    <label for="datetime">When did you do this?</label>
                     <input class="form-control" type="date" id="datetime" name="datetime" class="date" placeholder = "2009-06-23"> <!-- TODO fix europees formaat -->
                 </div>
                 <div class="form-group">
-                    <label for="comment">Opmerking</label>
+                    <label for="comment">Comment</label>
                     <textarea class="form-control" name="comment" id="comment" value="comment" id="commentField" placeholder="Comment"></textarea>
                 </div>
                 <input type="submit" value="Submit" class="btn btn-default">

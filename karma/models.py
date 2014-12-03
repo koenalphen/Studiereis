@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from datetime import datetime
 # Create your models here.
 
 
@@ -15,7 +16,7 @@ class Person(models.Model):
     user = models.OneToOneField(User)
     firstName = models.CharField(max_length=20)
     lastName = models.CharField(max_length=20)
-    email = models.CharField(max_length=100)
+    email = models.EmailField(max_length=254)
     telephone = models.CharField(max_length=10)
     committee = models.ForeignKey(Committee)
 
@@ -25,7 +26,7 @@ class Person(models.Model):
     def getKarma(self):
         karma = 0
         for activity in KarmaLog.objects.filter(person=self.pk, active=True):
-            task = Task.objects.get(description=activity.task)
+            task = Task.objects.get(pk=activity.task.pk)
             karma += task.karma
         return karma
 
@@ -33,6 +34,7 @@ class Person(models.Model):
 class Task(models.Model):
     description = models.CharField(max_length=100)
     karma = models.IntegerField(default=0)
+    recurring = models.BooleanField(default=False)
 
     def __unicode__(self):
         return unicode(self.description)
@@ -43,19 +45,19 @@ class KarmaLog(models.Model):
     committee = models.ForeignKey(Committee)
     task = models.ForeignKey(Task)
     comment = models.CharField(max_length=2047)
-    time = models.DateTimeField(auto_now_add=True)
+    time = models.DateTimeField(default=datetime.now)
     active = models.BooleanField(default=True)
 
     def __unicode__(self):
         return unicode(self.pk)
 
     def getTaskName(self):
-        task = Task.objects.get(description=self.task)
-        return task.description
+        taskName = self.task.description
+        return taskName
 
     def getTaskKarma(self):
-        task = Task.objects.get(description=self.task)
-        return task.karma
+        taskKarma = self.task.karma
+        return taskKarma
 
     def getPerson(self):
         return Person.objects.get(firstName=self.person)

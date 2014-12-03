@@ -1,0 +1,14 @@
+li a {
+color: green;
+}
+
+#bannerimg {
+width: 105%;
+height: auto;
+max-height: 300 px;
+overflow: hidden;
+}
+
+#karmacounter {
+
+}

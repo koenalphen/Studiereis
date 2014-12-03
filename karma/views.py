@@ -9,12 +9,14 @@ from karma.models import Person, KarmaLog, Committee, Task
 @login_required()
 def karmaHome(request):
     user = request.user
-    return HttpResponseRedirect(reverse('karma:personView', args=(user.pk,)))
+    person = Person.objects.get(user=request.user)
+    return HttpResponseRedirect(reverse('karma:personView', args=(person.pk,)))
 
 #In de index staat een tabel met alle personen, en hoeveel karmapunten ze hebben
 @login_required()
 def index(request):
     persons = Person.objects.all()
+    persons = sorted(persons, key=lambda person: person.firstName)
     committees = Committee.objects.all()
     context = {
         'persons': persons,
@@ -26,8 +28,8 @@ def index(request):
 @login_required()
 def personView(request, person_id):
     person = get_object_or_404(Person, pk=person_id)
-    tasks = reversed(KarmaLog.objects.filter(person=person.pk, active=True))
-    taskOverview = Task.objects.all()
+    tasks = reversed(KarmaLog.objects.filter(person=person.pk, active=True).order_by('time'))
+    taskOverview = Task.objects.filter(recurring=True)
     committees = Committee.objects.all()
     context = {
         'person': person,
@@ -42,7 +44,7 @@ def personView(request, person_id):
 def committeeView(request, committeeName):
     committees = Committee.objects.all()
     committeeSelected = Committee.objects.get(name=committeeName)
-    tasks = reversed(KarmaLog.objects.filter(committee=committeeSelected.pk, active=True))
+    tasks = reversed(KarmaLog.objects.filter(committee=committeeSelected.pk, active=True).order_by('time'))
     context = {
         'committeeSelected': committeeSelected,
         'committees': committees,
@@ -55,12 +57,17 @@ def addTask(request, person_id):
     comment = request.POST["comment"] if request.POST["comment"] != "comment" else ""
     taskselect = request.POST["taskselect"]
     committee_id = request.POST["committeeSelect"]
+    taskTime = request.POST["datetime"]
     if taskselect == "nieuw_task":
         omschrijving = request.POST["Omschrijving"]
         karma = request.POST["karma"]
-        tk = Task.objects.filter(description=omschrijving)
+	if "recurring" in request.POST:
+	    recurring = True
+	else:
+	    recurring = False
+        tk = Task.objects.filter(description=omschrijving, recurring=True)
         if len(tk) == 0:
-            task = Task(description=omschrijving, karma=karma)
+            task = Task(description=omschrijving, karma=karma, recurring=recurring)
             task.save()
         else:
             return HttpResponse("You did something horribly wrong. Perhaps the activity you are trying to add already exists?")
@@ -68,8 +75,7 @@ def addTask(request, person_id):
         task = Task.objects.get(pk=taskselect)
     committee = get_object_or_404(Committee, pk=committee_id)
     person = get_object_or_404(Person, pk=person_id)
-
-    taskToAdd = KarmaLog(person=person, committee=committee, task=task, comment=comment)
+    taskToAdd = KarmaLog(person=person, committee=committee, task=task, comment=comment, time=taskTime)
     taskToAdd.save()
     return HttpResponseRedirect(reverse('karma:personView', args=(person.pk,)))
 

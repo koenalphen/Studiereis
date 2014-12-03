@@ -9,7 +9,7 @@
     </head>
     <body>
         <span name="banner">
-            <img class="row" src="{% static 'img/wide.jpg' %}">
+            <a href="{% url 'karma:karmaHome' %}"><img id="bannerimg" class="row" src="{% static 'img/wide.jpg' %}"></a>
         </span>
         {% block navigation %}
         {% endblock %}

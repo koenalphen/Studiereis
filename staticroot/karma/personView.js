@@ -72,7 +72,7 @@ $(document).ready(function(){
 
     $("button").click(function(){
         taskToRemove_id = $(this).attr("id");
-        $.post("karma/removelog/", {taskToRemove_id: taskToRemove_id});
+        $.post("/StudiereisApps/karma/removelog/", {taskToRemove_id: taskToRemove_id});
         $(this).closest('tr').remove();
 
     });

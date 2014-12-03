@@ -5,22 +5,6 @@
 <title>Committee view</title>
 {% endblock %}
 
-
-{% block navigation %}
-{% if committees and committeeSelected %}
-        <ul class="nav nav-tabs">
-            <li><a href="{% url 'karma:index' %}">participants</a></li>
-            {% for committee in committees %}
-                {% if committee != committeeSelected %}
-                    <li><a href="{% url 'karma:committeeView' committee.name %}">{{committee.name}}</a></li>
-                {% else %}
-                    <li class="active"><a href="{% url 'karma:committeeView' committee.name %}">{{committee.name}}</a></li>
-                {% endif %}
-            {% endfor %}
-        </ul>
-{% endif %}
-{% endblock %}
-
 {% block content %}
 {% if committeeSelected and tasks %}
         <table class="table table-striped">
