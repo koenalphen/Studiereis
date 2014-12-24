@@ -1,0 +1,27 @@
+{% autoescape off %}
+\documentclass[•]{report}
+\begin{document}
+\chapter{Overzicht Karma punten}
+\textbf{Van} {{ start_date }} \textbf{tot} {{ end_date }}:\\
+{% for person in persons %}
+	\begin{table}[h!]
+	\begin{tabular}{| l | c | c | c |}
+	\hline	
+	Datum gedaan & Wat & Comment & Karma punten \\
+	\hline
+	{% for task in person.tasks %}
+		{{ task.time }} & {{ task.getTaskName }} & {{ task.comment }} & {{ task.getTaskKarma }} \\
+		\hline
+	{% endfor %}
+
+	\end{tabular}
+	\caption{De karma punten van {{ person.firstName }} }
+	\end{table}
+{% endfor %}
+\noindent
+\textbf{Goedgekeurd op:}\\
+[1cm]
+\textbf{Door:}\\
+[5cm]
+\end{document}
+{% endautoescape %}

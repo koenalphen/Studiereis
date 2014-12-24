@@ -3,6 +3,15 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
+from django.template.response import TemplateResponse
+from reportlab.pdfgen import canvas
+from django.template import Context
+from django.template.loader import get_template
+from subprocess import Popen, PIPE
+from TempDir import TemporaryDirectory
+from datetime import datetime, date
+import os
+import tempfile
 
 from karma.models import Person, KarmaLog, Committee, Task
 
@@ -61,10 +70,10 @@ def addTask(request, person_id):
     if taskselect == "nieuw_task":
         omschrijving = request.POST["Omschrijving"]
         karma = request.POST["karma"]
-	if "recurring" in request.POST:
-	    recurring = True
-	else:
-	    recurring = False
+        if "recurring" in request.POST:
+            recurring = True
+        else:
+            recurring = False
         tk = Task.objects.filter(description=omschrijving, recurring=True)
         if len(tk) == 0:
             task = Task(description=omschrijving, karma=karma, recurring=recurring)
@@ -90,6 +99,49 @@ def removeTask(request):
     taskToRemove.save()
     print("succes!")
 
+def overviewstart(request):
+    context = {
+        'now': datetime.now()
+    }
+    return render(request, 'karma/overviewstart.html', context)
+
+def overviewgenpdf(request):
+    #range_start = request.POST["range_start"]
+    #range_end = request.POST["range_end"]
+    range_start = datetime(2012, 01, 01)
+    range_end = datetime(2014, 12, 24)
+    persons = Person.objects.all()
+    for person in persons:
+        person.tasks = KarmaLog.objects.filter(timeadded__gt=range_start, timeadded__lte=range_end, person=person)
+        for task in person.tasks:
+            task.time = task.time.date()
+    context = Context({
+            'start_date': range_start.date(),
+            'end_date': range_end.date(),
+            'persons': persons,
+        })
+    template = get_template('overview_template.tex')
+    rendered_tpl = template.render(context).encode('utf-8')
+
+    # Python3 only. For python2 check out the docs!
+    with TemporaryDirectory() as tempdir:
+        # Create subprocess, supress output with PIPE and
+        # run latex twice to generate the TOC properly.
+        # Finally read the generated pdf.
+        for i in range(2):
+            process = Popen(
+                ['pdflatex', '-output-directory', tempdir],
+                stdin=PIPE,
+                stdout=PIPE,
+            )
+            process.communicate(rendered_tpl)
+        with open(os.path.join(tempdir, 'texput.pdf'), 'rb') as f:
+            pdf = f.read()
+
+    response = HttpResponse(content_type='application/pdf')
+    # response['Content-Disposition'] = 'attachment; filename=' + 'texput.pdf'
+    response.write(pdf)
+    return response
 
 
 def yousuck(request, person_id):

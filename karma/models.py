@@ -30,6 +30,10 @@ class Person(models.Model):
             karma += task.karma
         return karma
 
+    def getTaskList(self, range_start=datetime(2010, 1, 1), range_end=datetime.now):
+        tasks = KarmaLog.objects.filter(timeadded__gt=range_start, timeadded__lte=range_end, person=self)
+        return tasks
+
 
 class Task(models.Model):
     description = models.CharField(max_length=100)
@@ -46,6 +50,7 @@ class KarmaLog(models.Model):
     task = models.ForeignKey(Task)
     comment = models.CharField(max_length=2047)
     time = models.DateTimeField(default=datetime.now)
+    timeadded = models.DateTimeField(auto_now_add=True)
     active = models.BooleanField(default=True)
 
     def __unicode__(self):
