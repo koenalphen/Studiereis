@@ -1,10 +1,20 @@
-<!DOCTYPE html>
-<html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
+{% extends "karma_base.html" %}
+{% load staticfiles %}
+{% block head %}
+<title>Generate an overview</title>
+{% endblock %}
 
-</body>
-</html>
+{% block content %}
+    <div class = 'col-md-4'>
+    <form id="taskAdder" action="{% url 'karma:overviewgenpdf' %}" method="post" role="form" class="form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="range_start">from</label>
+            <input class="form-control" type="date" id="range_start" name="range_start" class="date">
+            <label for="range_end">Up to but not including</label>
+            <input class="form-control" type="date" id="range_end" name="range_end" class="date">
+            <input class="btn btn-default" type="submit" value="Submit">
+        </div>
+    </form>
+    </div>
+{% endblock %}

@@ -1,8 +1,8 @@
 {% autoescape off %}
 \documentclass[•]{report}
 \begin{document}
-\chapter{Overzicht Karma punten}
-\textbf{Van} {{ start_date }} \textbf{tot} {{ end_date }}:\\
+\section*{Overzicht Karma punten}
+\textbf{Van} {{ start_date }} \textbf{tot (dus \emph{niet} tot en met)} {{ end_date }}:\\
 {% for person in persons %}
 	\begin{table}[h!]
 	\begin{tabular}{| l | c | c | c |}

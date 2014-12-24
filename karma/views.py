@@ -100,16 +100,21 @@ def removeTask(request):
     print("succes!")
 
 def overviewstart(request):
+    committees = Committee.objects.all()
     context = {
-        'now': datetime.now()
+        'committees': committees,
+        'now': datetime.now(),
     }
     return render(request, 'karma/overviewstart.html', context)
 
 def overviewgenpdf(request):
-    #range_start = request.POST["range_start"]
-    #range_end = request.POST["range_end"]
-    range_start = datetime(2012, 01, 01)
-    range_end = datetime(2014, 12, 24)
+    range_start = request.POST["range_start"]
+    range_end = request.POST["range_end"]
+    #range_start = datetime(2012, 01, 01)
+    #range_end = datetime(2014, 12, 24)
+    range_start = datetime.strptime(range_start, '%Y-%m-%d')
+    range_end = datetime.strptime(range_end, '%Y-%m-%d')
+
     persons = Person.objects.all()
     for person in persons:
         person.tasks = KarmaLog.objects.filter(timeadded__gt=range_start, timeadded__lte=range_end, person=person)

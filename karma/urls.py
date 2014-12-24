@@ -13,4 +13,5 @@ urlpatterns = patterns('',
     url(r'^removelog/$', views.removeTask, name='removeTask'),
     url(r'^yousuck/$', views.yousuck, name='yousuck'),
     url(r'^overview.pdf$', views.overviewgenpdf, name='overviewgenpdf'),
+    url(r'^overviewgen$', views.overviewstart, name='overviewstart'),
 )
