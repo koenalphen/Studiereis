@@ -117,9 +117,11 @@ def overviewgenpdf(request):
 
     persons = Person.objects.all()
     for person in persons:
+        person.totalKarma = 0
         person.tasks = KarmaLog.objects.filter(timeadded__gt=range_start, timeadded__lte=range_end, person=person)
         for task in person.tasks:
             task.time = task.time.date()
+            person.totalKarma += task.task.karma
     context = Context({
             'start_date': range_start.date(),
             'end_date': range_end.date(),
