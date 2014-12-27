@@ -1,22 +1,36 @@
 {% autoescape off %}
 \documentclass[•]{report}
+\usepackage[•]{longtable}
 \begin{document}
 \section*{Overzicht Karma punten}
 \textbf{Van} {{ start_date }} \textbf{tot (dus \emph{niet} tot en met)} {{ end_date }}:\\
+
 {% for person in persons %}
-	\begin{table}[h!]
-	\begin{tabular}{| l | c | c | c |}
-	\hline	
-	Datum gedaan & Wat & Comment & Karma punten \\
+	\begin{longtable}{|p{0.2\textwidth}|p{0.27\textwidth}|p{0.40\textwidth}|p{0.13\textwidth}|}	
+	\caption{De karma punten van {{ person.firstName }} }\\
 	\hline
+	\textbf{Datum gedaan} & \textbf{Wat} & \textbf{Comment} & \textbf{Karma punten} \\
+	\hline
+	\endfirsthead
+	
+	\multicolumn{4}{c}%
+	{\tablename\ \thetable\ -- \textit{Continued from previous page}} \\
+	\hline
+	\textbf{Datum gedaan} & \textbf{Wat} & \textbf{Comment} & \textbf{Karma punten} \\
+	\hline
+	\endhead
+	
+	\hline \multicolumn{4}{r}{\textit{Continued on next page}} \\
+	\endfoot
+	
+	\hline
+	\endlastfoot
+	
 	{% for task in person.tasks %}
 		{{ task.time }} & {{ task.getTaskName }} & {{ task.comment }} & {{ task.getTaskKarma }} \\
 		\hline
 	{% endfor %}
-
-	\end{tabular}
-	\caption{De karma punten van {{ person.firstName }} }
-	\end{table}
+	\end{longtable}
 {% endfor %}
 \noindent
 \textbf{Goedgekeurd op:}\\
