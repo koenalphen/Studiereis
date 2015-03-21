@@ -14,4 +14,5 @@ urlpatterns = patterns('',
     url(r'^yousuck/$', views.yousuck, name='yousuck'),
     url(r'^overview.pdf$', views.overviewgenpdf, name='overviewgenpdf'),
     url(r'^overviewgen$', views.overviewstart, name='overviewstart'),
+    url(r'^charts/$', views.charts, name='charts'),
 )

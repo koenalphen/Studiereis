@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.csrf import csrf_protect
 from django.template.response import TemplateResponse
 from reportlab.pdfgen import canvas
@@ -9,7 +9,10 @@ from django.template import Context
 from django.template.loader import get_template
 from subprocess import Popen, PIPE
 from TempDir import TemporaryDirectory
-from datetime import datetime, date
+from datetime import datetime, date, timedelta, time
+from isoweek import Week
+from django.utils import simplejson
+from django.conf import settings
 import os
 import tempfile
 
@@ -99,6 +102,8 @@ def removeTask(request):
     taskToRemove.save()
     print("succes!")
 
+@csrf_protect
+@login_required()
 def overviewstart(request):
     committees = Committee.objects.all()
     context = {
@@ -107,6 +112,8 @@ def overviewstart(request):
     }
     return render(request, 'karma/overviewstart.html', context)
 
+@csrf_protect
+@login_required()
 def overviewgenpdf(request):
     range_start = request.POST["range_start"]
     range_end = request.POST["range_end"]
@@ -153,3 +160,120 @@ def overviewgenpdf(request):
 
 def yousuck(request, person_id):
     return HttpResponse("You did something horribly wrong. Perhaps the activity you are trying to add already exists?")
+
+@csrf_protect
+@login_required()
+@user_passes_test(lambda u: u.is_staff)
+def charts(request):
+    committees = Committee.objects.all()
+    tasks = KarmaLog.objects.filter(active=True).order_by('time')
+    numTasks = len(tasks)
+    year = tasks[0].time.isocalendar()[0]  # get year of first task
+    startDate = tasks[0].time.isocalendar()[1]  # get weeknumber of first task
+    endDate = tasks[numTasks - 1].time.isocalendar()[1] + 52 * (tasks[numTasks - 1].time.isocalendar()[0] - tasks[0].time.isocalendar()[0])  # get time of last task
+    weekmodifier = 0
+    timelabels = []
+    karmaPerWeek = []
+    for week in range(startDate, endDate+1):
+        karmaThisWeek = 0
+        monday = datetime.combine(Week(year, week - weekmodifier).monday(), time.min)
+        sunday = datetime.combine(Week(year, week - weekmodifier).sunday(), time.max)
+        logsThisWeek = tasks.filter(time__gt=monday, time__lte=sunday)
+        for log in logsThisWeek:
+            karmaThisWeek += log.task.karma
+        karmaPerWeek.append(karmaThisWeek)
+        timelabels.append(week - weekmodifier)
+        if week == 52:
+            weekmodifier += 52
+            year += 1
+
+    lineChartData = {
+        'labels': timelabels,
+        'datasets':
+            [
+                {
+                    'label': "Karma per week",
+                    'fillColor': "rgba(220,220,220,0.2)",
+                    'strokeColor': "rgba(220,220,220,1)",
+                    'pointColor': "rgba(220,220,220,1)",
+                    'pointStrokeColor': "#fff",
+                    'pointHighlightFill': "#fff",
+                    'pointHighlightStroke': "rgba(220,220,220,1)",
+                    'data': karmaPerWeek,
+                }
+            ]
+        }
+
+    # Code to generate the "per activity" chart
+    categoryLabels = []
+    karmaPerCategory = []
+    # recurring tasks
+    categories = Task.objects.filter(recurring=True)
+    for category in categories:
+        categoryLabels.append(category.description)
+        logs = tasks.filter(task=category)
+        karmaPerCategory.append(category.karma * len(logs))
+    # other tasks
+    otherTasks = Task.objects.filter(recurring=False)
+    otherKarma = 0
+    for task in otherTasks:
+        otherKarma += task.karma
+    categoryLabels.append('Overig')
+    karmaPerCategory.append(otherKarma)
+
+    perTaskData = {
+        'labels': categoryLabels,
+        'datasets':
+            [
+                {
+                    'label': "My First dataset",
+                    'fillColor': "rgba(220,220,220,0.5)",
+                    'strokeColor': "rgba(220,220,220,0.8)",
+                    'highlightFill': "rgba(220,220,220,0.75)",
+                    'highlightStroke': "rgba(220,220,220,1)",
+                    'data': karmaPerCategory
+                }
+            ]
+        }
+
+
+    # Code to generate the "per committee" chart
+    committeeLabels = []
+    karmaPerCommittee = []
+    for committee in committees:
+        committeeKarma = 0
+        committeeLabels.append(committee.name)
+        logs = tasks.filter(committee=committee)
+        for task in logs:
+            committeeKarma += task.task.karma
+        karmaPerCommittee.append(committeeKarma)
+
+    perCommitteeData = {
+        'labels': committeeLabels,
+        'datasets':
+            [
+                {
+                    'label': "My First dataset",
+                    'fillColor': "rgba(220,220,220,0.5)",
+                    'strokeColor': "rgba(220,220,220,0.8)",
+                    'highlightFill': "rgba(220,220,220,0.75)",
+                    'highlightStroke': "rgba(220,220,220,1)",
+                    'data': karmaPerCommittee
+                }
+            ]
+        }
+
+
+
+    lineData = simplejson.dumps(lineChartData)
+    perTaskDataJson = simplejson.dumps(perTaskData)
+    perCommitteeDataJson = simplejson.dumps(perCommitteeData)
+
+    context = {
+        'committees': committees,
+        'lineData': lineData,
+        'perTaskData': perTaskDataJson,
+        'perCommitteeData': perCommitteeDataJson,
+    }
+    return render(request, 'karma/Charts.html', context)
+

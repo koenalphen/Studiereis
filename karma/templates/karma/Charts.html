@@ -1,0 +1,30 @@
+{% extends "karma_base.html" %}
+{% load staticfiles %}
+{% block head %}
+<!--<link rel="stylesheet" type="text/css" href="{% static 'karma/style.css' %}" />-->
+<script type="text/javascript">
+   var lineData = {{lineData|safe}}
+   var perTaskData = {{perTaskData|safe}}
+   var perCommitteeData = {{perCommitteeData|safe}}
+</script>
+<script type="text/javascript" src="{% static 'karma/ChartsKarma.js' %}"></script>
+
+<title>Charts view</title>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+<div class="col-md-4">
+    <h1>Karma points per week</h1>
+    <canvas id="over_time" width="400" height="400"></canvas>
+</div>
+<div class="col-md-4">
+    <h1>Karma points per category</h1>
+    <canvas id="per_category" width="400" height="400"></canvas>
+</div>
+<div class="col-md-4">
+    <h1>Karma points per committee</h1>
+    <canvas id="per_committee" width="400" height="400"></canvas>
+</div>
+</div>
+{% endblock %}

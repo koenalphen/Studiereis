@@ -4,6 +4,9 @@ Install Git
 Pull code from Github
 Install libapache-mod-wsgi
 
+Make sure you have the isoweek python installed using:
+"sudo pip install isoweek"
+
 edit /etc/apache2/httpd.conf (if non existent, create one and add "Include httpd.conf" to the end of the apache2.conf file) and follow the instructions https://docs.djangoproject.com/en/1.4/howto/deployment/wsgi/modwsgi/
 
 
