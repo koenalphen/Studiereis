@@ -12,6 +12,7 @@ from TempDir import TemporaryDirectory
 from datetime import datetime, date, timedelta, time
 from isoweek import Week
 from django.utils import simplejson
+import pytz
 from django.conf import settings
 import os
 import tempfile
@@ -176,8 +177,11 @@ def charts(request):
     karmaPerWeek = []
     for week in range(startDate, endDate+1):
         karmaThisWeek = 0
-        monday = datetime.combine(Week(year, week - weekmodifier).monday(), time.min)
-        sunday = datetime.combine(Week(year, week - weekmodifier).sunday(), time.max)
+        tz = pytz.UTC
+        mondaynotz = datetime.combine(Week(year, week - weekmodifier).monday(), time.min)
+        monday = tz.localize(mondaynotz, is_dst=None).astimezone(pytz.utc)
+        sundaynotz = datetime.combine(Week(year, week - weekmodifier).sunday(), time.max)
+        sunday = tz.localize(sundaynotz, is_dst=None).astimezone(pytz.utc)
         logsThisWeek = tasks.filter(time__gt=monday, time__lte=sunday)
         for log in logsThisWeek:
             karmaThisWeek += log.task.karma
